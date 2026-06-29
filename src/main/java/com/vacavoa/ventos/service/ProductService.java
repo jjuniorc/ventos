@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.vacavoa.ventos.exceptions.ResourceNotFoundException;
 import com.vacavoa.ventos.model.Product;
 import com.vacavoa.ventos.repository.ProductRepository;
 
@@ -21,8 +22,9 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Optional<Product> findProductById(Long id){
-        return productRepository.findById(id);
+    public Product findProductById(Long id){
+        return productRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Product with ID " + id + " not found."));
     }
 
     public Product saveProduct(Product product){
@@ -31,6 +33,11 @@ public class ProductService {
 
     public void deleteProduct(Long id)
     {
+        if(productRepository.existsById(id) == false)
+        {
+            throw new ResourceNotFoundException("Product with ID " + id + " not found.");
+        }
+
         productRepository.deleteById(id);
     }
 }

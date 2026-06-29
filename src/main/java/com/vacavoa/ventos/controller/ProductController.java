@@ -3,11 +3,14 @@ package com.vacavoa.ventos.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vacavoa.ventos.exceptions.ResourceNotFoundException;
 import com.vacavoa.ventos.model.Product;
 import com.vacavoa.ventos.service.ProductService;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,10 +37,9 @@ public class ProductController {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<Product> findProduct(@PathVariable Long id) {
-        return productService.findProductById(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> findProduct(@PathVariable Long id) {
+        Product product = productService.findProductById(id);
+        return ResponseEntity.ok(product);
     }
 
     @PostMapping()
@@ -47,10 +49,9 @@ public class ProductController {
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id)
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id)
     {
         productService.deleteProduct(id);
-
         return ResponseEntity.noContent().build();
     }
     
